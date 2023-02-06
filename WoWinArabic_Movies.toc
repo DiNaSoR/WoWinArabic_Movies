@@ -1,0 +1,15 @@
+﻿## Interface: 100005
+## Title: WoWinArabic-Movies
+## Version: 10.00
+## Notes: AddOn displays translated subtitles during playing cinematics or movies
+## Notes_ar: يعرض AddOn ترجمات مترجمة أثناء تشغيل الأفلام السينمائية أو الأفلام
+## Notes_pl: Addon wyświetla przetłumaczone napisy podczas wyświetlania filmów
+## Author: Platine
+## eMail: platine.wow@gmail.com
+## DefaultState: Enabled
+## LoadOnDemand: 0
+
+Subtitles_AR.lua
+Bubbles_AR.lua
+Arabic_Reshaper.lua
+WoWinArabic_MovieSubtitles.lua
