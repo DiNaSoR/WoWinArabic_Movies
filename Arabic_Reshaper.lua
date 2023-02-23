@@ -1,4 +1,4 @@
-﻿-- Arabic Reshaper for WoWinArabic addons (2023.02.02)
+﻿-- Arabic Reshaper for WoWinArabic addons (2023.02.22)
 -- Author: Platine  (e-mail: platine.wow@gmail.com)
 -- Based on UTF8 library by Kyle Smith
 -- Special thanks to DragonArab for create letter reshaping tables and ligatures.
@@ -55,9 +55,9 @@ AS_Reshaping_Rules2 = {
    ["ل".."إ"] = {isolated = "ﻹ", initial="ﻹ",  middle="ﻺ",  final="ﻺ"},            -- Arabic ligature LAM with ALEF with HAMZA below
    ["ل".."آ"] = {isolated = "ﻵ", initial="ﻵ",  middle="ﻶ",  final="ﻶ"},            -- Arabic ligature LAM with ALEF with MADDA
    --Test
-   ["إ".."ع"] = {isolated = "0", initial="ﻋإ",  middle="ﻋﺈ",  final="3"},           -- Arabic ligature ALEF with Hamaz below + AIN Middle
-   ["ء".."و"] = {isolated = "وء", initial="وء",  middle="وء",  final="وء"},
-   ["ي".."ء"] = {isolated = "0", initial="1",  middle="ءﻲ",  final="3"},        
+   ["إ".."ع"] = {isolated = "0",    initial="ﻋإ",  middle="ﻋﺈ",   final="3"},           -- Arabic ligature ALEF with Hamaz below + AIN Middle
+   ["ء".."و"] = {isolated = "وء",   initial="وء",  middle="وء",   final="وء"},
+   ["ي".."ء"] = {isolated = "0",    initial="1",   middle="ءﻲ",   final="3"},        
    };
 
 AS_Reshaping_Rules3 = {
@@ -69,103 +69,106 @@ AS_Reshaping_Rules3 = {
    ["ل".."ا".."ز"] = {isolated = "زﻻ",  initial="زﻻ", middle="زﻼ", final="زﻼ"},        -- Arabic ligature LAM+ALEF+ZAIN
    };
 
+-------------------------------------------------------------------------------------------------------
+
 -- returns the number of bytes used by the UTF-8 character at byte
 function AS_UTF8charbytes(s, i)
 	-- argument defaults
-	i = i or 1
+	i = i or 1;
 
 	-- argument checking
-	if type(s) ~= "string" then
-		error("bad argument #1 to 'AS_UTF8charbytes' (string expected, got ".. type(s).. ")")
+	if (type(s) ~= "string") then
+		error("bad argument #1 to 'AS_UTF8charbytes' (string expected, got ".. type(s).. ")");
 	end
-	if type(i) ~= "number" then
-		error("bad argument #2 to 'QTR_UFT8charbytes' (number expected, got ".. type(i).. ")")
+	if (type(i) ~= "number") then
+		error("bad argument #2 to 'QTR_UFT8charbytes' (number expected, got ".. type(i).. ")");
 	end
 
-	local c = strbyte(s, i)
+	local c = strbyte(s, i);
 
 	-- determine bytes needed for character, based on RFC 3629
 	-- validate byte 1
-	if c > 0 and c <= 127 then
+	if (c > 0 and c <= 127) then
 		-- UTF8-1
-		return 1
+		return 1;
 
-	elseif c >= 194 and c <= 223 then
+	elseif (c >= 194 and c <= 223) then
 		-- UTF8-2
-		local c2 = strbyte(s, i + 1)
+		local c2 = strbyte(s, i + 1);
 
-		if not c2 then
-			error("UTF-8 string terminated early")
+		if (not c2) then
+			error("UTF-8 string terminated early");
 		end
 
 		-- validate byte 2
-		if c2 < 128 or c2 > 191 then
-			error("Invalid UTF-8 character")
+		if (c2 < 128 or c2 > 191) then
+			error("Invalid UTF-8 character");
 		end
 
-		return 2
+		return 2;
 
-	elseif c >= 224 and c <= 239 then
+	elseif (c >= 224 and c <= 239) then
 		-- UTF8-3
-		local c2 = strbyte(s, i + 1)
-		local c3 = strbyte(s, i + 2)
+		local c2 = strbyte(s, i + 1);
+		local c3 = strbyte(s, i + 2);
 
-		if not c2 or not c3 then
-			error("UTF-8 string terminated early")
+		if (not c2 or not c3) then
+			error("UTF-8 string terminated early");
 		end
 
 		-- validate byte 2
-		if c == 224 and (c2 < 160 or c2 > 191) then
+		if (c == 224 and (c2 < 160 or c2 > 191)) then
 			error("Invalid UTF-8 character")
-		elseif c == 237 and (c2 < 128 or c2 > 159) then
-			error("Invalid UTF-8 character")
-		elseif c2 < 128 or c2 > 191 then
-			error("Invalid UTF-8 character")
+		elseif (c == 237 and (c2 < 128 or c2 > 159)) then
+			error("Invalid UTF-8 character");
+		elseif (c2 < 128 or c2 > 191) then
+			error("Invalid UTF-8 character");
 		end
 
 		-- validate byte 3
-		if c3 < 128 or c3 > 191 then
-			error("Invalid UTF-8 character")
+		if (c3 < 128 or c3 > 191) then
+			error("Invalid UTF-8 character");
 		end
 
-		return 3
+		return 3;
 
-	elseif c >= 240 and c <= 244 then
+	elseif (c >= 240 and c <= 244) then
 		-- UTF8-4
-		local c2 = strbyte(s, i + 1)
-		local c3 = strbyte(s, i + 2)
-		local c4 = strbyte(s, i + 3)
+		local c2 = strbyte(s, i + 1);
+		local c3 = strbyte(s, i + 2);
+		local c4 = strbyte(s, i + 3);
 
-		if not c2 or not c3 or not c4 then
-			error("UTF-8 string terminated early")
+		if ((not c2) or (not c3) or (not c4)) then
+			error("UTF-8 string terminated early");
 		end
 
 		-- validate byte 2
-		if c == 240 and (c2 < 144 or c2 > 191) then
-			error("Invalid UTF-8 character")
-		elseif c == 244 and (c2 < 128 or c2 > 143) then
-			error("Invalid UTF-8 character")
-		elseif c2 < 128 or c2 > 191 then
-			error("Invalid UTF-8 character")
+		if (c == 240 and (c2 < 144 or c2 > 191)) then
+			error("Invalid UTF-8 character");
+		elseif (c == 244 and (c2 < 128 or c2 > 143)) then
+			error("Invalid UTF-8 character");
+		elseif (c2 < 128 or c2 > 191) then
+			error("Invalid UTF-8 character");
 		end
 
 		-- validate byte 3
-		if c3 < 128 or c3 > 191 then
-			error("Invalid UTF-8 character")
+		if (c3 < 128 or c3 > 191) then
+			error("Invalid UTF-8 character");
 		end
 
 		-- validate byte 4
-		if c4 < 128 or c4 > 191 then
-			error("Invalid UTF-8 character")
+		if (c4 < 128 or c4 > 191) then
+			error("Invalid UTF-8 character");
 		end
 
-		return 4
+		return 4;
 
 	else
-		error("Invalid UTF-8 character: "..c)
+		error("Invalid UTF-8 character: "..c);
 	end
 end
 
+-------------------------------------------------------------------------------------------------------
 
 -- returns the number of characters in a UTF-8 string
 function AS_UTF8len(s)
@@ -173,7 +176,7 @@ function AS_UTF8len(s)
    if (s) then          -- argument checking
       local pos = 1;
       local bytes = strlen(s);
-      while pos <= bytes do
+      while (pos <= bytes) do
          len = len + 1;
          pos = pos + AS_UTF8charbytes(s, pos);
       end
@@ -181,6 +184,7 @@ function AS_UTF8len(s)
    return len;
 end
 
+-------------------------------------------------------------------------------------------------------
 
 -- function finding character c in the string s and return true or false
 function AS_UTF8find(s, c)
@@ -192,7 +196,7 @@ function AS_UTF8find(s, c)
       local char1;
 
 		while (pos <= bytes) do
-         charbytes = AS_UTF8charbytes(s, pos);        -- count of bytes of the character
+         charbytes = AS_UTF8charbytes(s, pos);         -- count of bytes of the character
          char1 = strsub(s, pos, pos + charbytes - 1);  -- current character from the string s
 			if (char1 == c) then
             odp = true;
@@ -203,8 +207,62 @@ function AS_UTF8find(s, c)
 	return odp;
 end
 
+-------------------------------------------------------------------------------------------------------
 
--- Reverses the order of UTF-8 letters
+-- functions identically to string.sub except that i and j are UTF-8 characters
+-- instead of bytes
+function AS_UTF8sub(s, i, j)
+	j = j or -1;            -- argument defaults, is not required
+
+	-- argument checking
+	if (type(s) ~= "string") then
+		error("bad argument #1 to 'AS_UTF8sub' (string expected, got ".. type(s).. ")");
+	end
+	if (type(i) ~= "number") then
+		error("bad argument #2 to 'AS_UTF8sub' (number expected, got ".. type(i).. ")");
+	end
+	if (type(j) ~= "number") then
+		error("bad argument #3 to 'AS_UTF8sub' (number expected, got ".. type(j).. ")");
+	end
+
+	local pos = 1;
+	local bytes = strlen(s);
+	local len = 0;
+
+	-- only set l if i or j is negative
+	local l = (i >= 0 and j >= 0) or AS_UTF8len(s);
+	local startChar = (i >= 0) and i or l + i + 1;
+	local endChar   = (j >= 0) and j or l + j + 1;
+
+	-- can't have start before end!
+	if (startChar > endChar) then
+		return "";
+	end
+
+	-- byte offsets to pass to string.sub
+	local startByte, endByte = 1, bytes;
+
+	while (pos <= bytes) do
+		len = len + 1;
+
+		if (len == startChar) then
+			startByte = pos;
+		end
+
+		pos = pos + AS_UTF8charbytes(s, pos);
+
+		if (len == endChar) then
+			endByte = pos - 1;
+			break;
+		end
+	end
+
+	return strsub(s, startByte, endByte);
+end
+
+-------------------------------------------------------------------------------------------------------
+
+-- Reverses the order of UTF-8 letters with ReShaping
 function AS_UTF8reverse(s)
    local newstr = "";
    if (s) then                                   -- check if argument is not empty (nil)
@@ -213,9 +271,9 @@ function AS_UTF8reverse(s)
       local char0 = '';
       local char1, char2, char3;
       local charbytes1, charbytes2, charbytes3;
-      local position = -1;       -- not specified
+      local position = -1;           -- not specified
       local nextletter = 0;
-      local spaces = '( )?؟!,.;:،'; -- letters that we treat as a space
+      local spaces = '( )?؟!,.;:،';  -- letters that we treat as a space
 
       while (pos <= bytes) do
          charbytes1 = AS_UTF8charbytes(s, pos);        -- count of bytes (liczba bajtów znaku)
@@ -372,3 +430,5 @@ function AS_UTF8reverse(s)
    end
    return newstr;
 end
+
+-------------------------------------------------------------------------------------------------------
