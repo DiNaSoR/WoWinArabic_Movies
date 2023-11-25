@@ -1,8 +1,7 @@
-﻿-- Addon: WoWinArabic-Movies (version: 10.00) 2023.02.05
+﻿-- Addon: WoWinArabic-Movies (version: 10.2) 2023.11.25
 -- Note: AddOn displays translated subtitles during playing cinematics or movies.
 -- Autor: Platine  (e-mail: platine.wow@gmail.com)
--- Special thanks for DragonArab for helping to create letter reshaping rules.
-
+-- Contributor: DragonArab - Developed letter reshaping tables and ligatures (http://WoWinArabic.com)
 
 -- General Variables
 local MF_version = GetAddOnMetadata("WoWinArabic_Movies", "Version");
@@ -168,7 +167,7 @@ function MF_ShowCinematicSubtitles()            -- wyświetlanie napisów w CINE
             local MF_hash2 = StringHash(MF_napis2);
             if (BB_Bubbles[MF_hash2]) then            -- istnieje tłumaczenie w dymkach
             
-               local MF_output = "r|"..AS_UTF8reverse(string.sub(MF_napis,1,p1-1)).." مووي:FFEEDDCCc| "..MF_ZmienKody(BB_Bubbles[MF_hash2]);
+               local MF_output = "r|"..AS_UTF8reverse(string.sub(MF_napis,1,p1-1)).." يتحدث:FFEEDDCCc| "..MF_ZmienKody(BB_Bubbles[MF_hash2]);
                CinematicFrame.Subtitle1:SetText(AS_UTF8reverse(MF_output));                   -- podmień wyświetlany tekst
                if (string.len(MF_output) > 130) then
                   CinematicFrame.Subtitle1:SetFont(MF_Font, 15);         -- zmień czcionkę
